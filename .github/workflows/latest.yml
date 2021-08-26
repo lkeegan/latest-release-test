@@ -57,6 +57,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
           submodules: 'true'
       - run: git status
       - run: git log
