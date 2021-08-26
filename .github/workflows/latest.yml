@@ -21,12 +21,16 @@ jobs:
       - run: git show-ref --tags
       - uses: octokit/request-action@v2.x
         if: github.ref == 'refs/heads/main'
+        id: get_latest_release
+        with:
+          route: GET /repos/lkeegan/latest-release-test/releases/latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: octokit/request-action@v2.x
+        if: github.ref == 'refs/heads/main'
         id: delete_latest_release
         with:
-          route: GET /repos/{owner}/{repo}/releases/{release_id}
-          owner: lkeegan
-          repo: latest-release-test
-          release_id: latest
+          route: DELETE /repos/lkeegan/latest-release-test/releases/latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: "echo Release found: ${{ steps.delete_latest_release.outputs.data }}"
