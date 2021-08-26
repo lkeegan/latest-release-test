@@ -19,21 +19,21 @@ jobs:
       - run: git status
       - run: git log
       - run: git show-ref --tags
-      - uses: octokit/request-action@v2.x
-        if: github.ref == 'refs/heads/main'
-        id: get_latest_release
-        with:
-          route: GET /repos/lkeegan/latest-release-test/releases/latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: octokit/request-action@v2.x
-        if: github.ref == 'refs/heads/main'
-        id: delete_latest_release
-        with:
-          route: DELETE /repos/lkeegan/latest-release-test/releases/latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: "echo Release found: ${{ steps.delete_latest_release.outputs.data }}"
+      # - uses: octokit/request-action@v2.x
+      #   if: github.ref == 'refs/heads/main'
+      #   id: get_latest_release
+      #   with:
+      #     route: GET /repos/lkeegan/latest-release-test/releases/latest
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - uses: octokit/request-action@v2.x
+      #   if: github.ref == 'refs/heads/main'
+      #   id: delete_latest_release
+      #   with:
+      #     route: DELETE /repos/lkeegan/latest-release-test/releases/latest
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - run: "echo Release found: ${{ steps.delete_latest_release.outputs.data }}"
 
       # - uses: dev-drprasad/delete-tag-and-release@v0.2.0
       #     with:
@@ -43,15 +43,14 @@ jobs:
       #     env:
       #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-       # - uses: actions/github-script@v4
-       #   if: github.ref == 'refs/heads/main'
-       #   with:
-       #     github-token: ${{secrets.GITHUB_TOKEN}}
-       #     debug: true
-       #     script: |
-       #       const { owner, repo } = context.repo
-       #       github.repos.
-       #       await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
+      - uses: actions/github-script@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          debug: true
+          script: |
+            const { owner, repo } = context.repo
+            await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
       - run: git status
       - run: git log
       - run: git show-ref --tags
