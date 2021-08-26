@@ -5,6 +5,7 @@ on: push
 jobs:
   update-latest-tag:
     name: Update latest tag and remove existing latest release
+    if: github.repository == 'lkeegan/latest-release-test' # don't do this on forks!
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -17,6 +18,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - run: git status
       - run: git log
+      - run: git show-ref --tags
       - uses: actions/github-script@v4
         if: github.ref == 'refs/heads/master'
         with:
@@ -26,6 +28,7 @@ jobs:
             await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
       - run: git status
       - run: git log
+      - run: git show-ref --tags
         if: github.ref == 'refs/heads/master'
       - name: Move latest tag
         run: |
@@ -34,6 +37,7 @@ jobs:
           git push origin latest
       - run: git status
       - run: git log
+      - run: git show-ref --tags
 
   build:
     name: Build the release binaries
@@ -47,6 +51,7 @@ jobs:
           submodules: 'true'
       - run: git status
       - run: git log
+      - run: git show-ref --tags
       - run: git log > git-log.txt
       - uses: actions/upload-artifact@v2
         with:
@@ -55,17 +60,17 @@ jobs:
   release-latest:
     needs: [build, update-latest-tag]
     runs-on: ubuntu-20.04
-    # upload binaries to "latest" release if commit is tagged "latest"
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/latest')
+    # upload binaries to "latest" release if on master branch of original repo (don't do this on a fork)
+    if: github.repository == 'lkeegan/latest-release-test' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: 'true'
           fetch-depth: 0
           ref: ${{ github.head_ref }}
-    # todo: remove "latest" release if it exists
       - run: git status
       - run: git log
+      - run: git show-ref --tags
       - uses: actions/download-artifact@v2
         with:
           name: artifact
