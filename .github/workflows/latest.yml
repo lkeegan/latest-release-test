@@ -43,23 +43,23 @@ jobs:
       #     env:
       #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/github-script@v4
-        if: github.ref == 'refs/heads/main'
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          debug: true
-          script: |
-            const { owner, repo } = context.repo
-            await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
+      # - uses: actions/github-script@v4
+      #   if: github.ref == 'refs/heads/main'
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     debug: true
+      #     script: |
+      #       const { owner, repo } = context.repo
+      #       await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
       - run: git status
       - run: git log
       - run: git show-ref --tags
-      - name: Move latest tag
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git push origin :refs/tags/latest
-          git tag -f latest
-          git push origin latest
+      # - name: Move latest tag
+      #   if: github.ref == 'refs/heads/main'
+      #   run: |
+      #     git push origin :refs/tags/latest
+      #     git tag -f latest
+      #     git push origin latest
       - run: git status
       - run: git log
       - run: git show-ref --tags
