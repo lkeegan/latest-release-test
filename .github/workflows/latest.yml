@@ -20,7 +20,7 @@ jobs:
       - run: git log
       - run: git show-ref --tags
       - uses: actions/github-script@v4
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -29,8 +29,8 @@ jobs:
       - run: git status
       - run: git log
       - run: git show-ref --tags
-        if: github.ref == 'refs/heads/master'
       - name: Move latest tag
+        if: github.ref == 'refs/heads/main'
         run: |
           git push origin :refs/tags/latest
           git tag -f latest
@@ -60,8 +60,8 @@ jobs:
   release-latest:
     needs: [build, update-latest-tag]
     runs-on: ubuntu-20.04
-    # upload binaries to "latest" release if on master branch of original repo (don't do this on a fork)
-    if: github.repository == 'lkeegan/latest-release-test' && github.ref == 'refs/heads/master'
+    # upload binaries to "latest" release if on main branch of original repo (don't do this on a fork)
+    if: github.repository == 'lkeegan/latest-release-test' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
         with:
