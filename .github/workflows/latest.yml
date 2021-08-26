@@ -81,4 +81,4 @@ jobs:
           overwrite: true
           file_glob: true
           prerelease: true
-          body: "Latest pre-release version"
+          body: "Latest pre-release versions"
