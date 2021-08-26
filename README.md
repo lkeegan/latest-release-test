@@ -1,6 +1,6 @@
 # latest-release-test
 
-On every commit to `main`:
+On every commit to `main` (i.e. not PRs):
 
 - `latest` tag is moved to this commit
 - any existing `latest` Release is deleted
