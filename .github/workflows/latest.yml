@@ -5,7 +5,6 @@ on: push
 jobs:
   update-latest-tag:
     name: Update latest tag and remove existing latest release
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -19,6 +18,7 @@ jobs:
       - run: git status
       - run: git log
       - uses: actions/github-script@v4
+        if: github.ref == 'refs/heads/master'
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -26,6 +26,7 @@ jobs:
             await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
       - run: git status
       - run: git log
+        if: github.ref == 'refs/heads/master'
       - name: Move latest tag
         run: |
           git push origin :refs/tags/latest
@@ -34,7 +35,8 @@ jobs:
       - run: git status
       - run: git log
 
-  ci:
+  build:
+    name: Build the release binaries
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -51,7 +53,7 @@ jobs:
           path: ./git-log.txt
 
   release-latest:
-    needs: [ci, update-latest-tag]
+    needs: [build, update-latest-tag]
     runs-on: ubuntu-20.04
     # upload binaries to "latest" release if commit is tagged "latest"
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/latest')
