@@ -23,7 +23,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         id: delete_latest_release
         with:
-          route: DELETE /repos/{owner}/{repo}/releases/{release_id}
+          route: GET /repos/{owner}/{repo}/releases/{release_id}
           owner: lkeegan
           repo: latest-release-test
           release_id: latest
