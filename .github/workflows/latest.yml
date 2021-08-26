@@ -57,10 +57,10 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/latest')
     steps:
       - uses: actions/checkout@v2
-      with:
-        submodules: 'true'
-        fetch-depth: 0
-        ref: ${{ github.head_ref }}
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
     # todo: remove "latest" release if it exists
       - run: git status
       - run: git log
