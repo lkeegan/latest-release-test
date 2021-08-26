@@ -23,6 +23,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
+          continue-on-error: true
           script: |
             const { owner, repo } = context.repo
             await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
