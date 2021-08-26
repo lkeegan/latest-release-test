@@ -21,7 +21,7 @@ jobs:
       - run: git show-ref --tags
       - name: Delete any existing latest release
         if: github.ref == 'refs/heads/main'
-        run: gh release delete latest
+        run: gh release delete latest || echo "No latest release found to delete"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Move latest tag
