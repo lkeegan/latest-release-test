@@ -23,7 +23,10 @@ jobs:
         if: github.ref == 'refs/heads/main'
         id: delete_latest_release
         with:
-          route: DELETE /repos/lkeegan/latest-release-test/releases/latest
+          route: DELETE /repos/{owner}/{repo}/releases/{release_id}
+          owner: lkeegan
+          repo: latest-release-test
+          release_id: latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: "echo Release found: ${{ steps.delete_latest_release.outputs.data }}"
