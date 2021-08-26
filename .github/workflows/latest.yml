@@ -1,0 +1,78 @@
+name: Update latest release
+
+on: push
+
+jobs:
+  update-latest-tag:
+    name: Update latest tag and remove existing latest release
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+      - run: git status
+      - run: git log
+      - uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { owner, repo } = context.repo
+            await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
+      - run: git status
+      - run: git log
+      - name: Move latest tag
+        run: |
+          git push origin :refs/tags/latest
+          git tag -f latest
+          git push origin latest
+      - run: git status
+      - run: git log
+
+  ci:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - run: git status
+      - run: git log
+      - run: git log > git-log.txt
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./git-log.txt
+
+  release-latest:
+    needs: [ci, update-latest-tag]
+    runs-on: ubuntu-20.04
+    # upload binaries to "latest" release if commit is tagged "latest"
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/latest')
+    steps:
+      - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+        fetch-depth: 0
+        ref: ${{ github.head_ref }}
+    # todo: remove "latest" release if it exists
+      - run: git status
+      - run: git log
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          path: binaries
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: binaries/*
+          tag: latest
+          overwrite: true
+          file_glob: true
