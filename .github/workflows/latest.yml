@@ -19,14 +19,22 @@ jobs:
       - run: git status
       - run: git log
       - run: git show-ref --tags
-      - uses: actions/github-script@v4
-        if: github.ref == 'refs/heads/main'
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          continue-on-error: true
-          script: |
-            const { owner, repo } = context.repo
-            await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
+      # - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      #     with:
+      #       delete_release: true
+      #       tag_name: latest
+      #       repo: lkeegan/latest-release-test
+      #     env:
+      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - uses: actions/github-script@v4
+      #   if: github.ref == 'refs/heads/main'
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     continue-on-error: true
+      #     script: |
+      #       const { owner, repo } = context.repo
+      #       await github.repos.deleteRelease({ owner, repo, release_id: "latest" })
       - run: git status
       - run: git log
       - run: git show-ref --tags
